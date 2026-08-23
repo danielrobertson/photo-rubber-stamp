@@ -1,23 +1,14 @@
 ---
 import Base from "../layouts/Base.astro";
-import SiteHeader from "../components/SiteHeader.astro";
 import Desk from "../components/Desk.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 ---
 
 <Base>
-	<SiteHeader />
-	<main>
-		<section class="mx-auto max-w-2xl px-5 pt-14 text-center sm:px-8 lg:pt-20">
-			<h1
-				class="rise font-display text-4xl font-black tracking-tight text-balance text-ink sm:text-5xl"
-				style="--delay:.05s"
-			>
-				Give every photo its field notes.
-			</h1>
-		</section>
-
-		<Desk />
-	</main>
-	<SiteFooter />
+	<div class="flex min-h-screen flex-col">
+		<main class="flex flex-1 items-center py-10 sm:py-14">
+			<Desk />
+		</main>
+		<SiteFooter />
+	</div>
 </Base>

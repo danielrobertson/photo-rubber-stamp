@@ -1,125 +1,111 @@
-<section id="desk" class="mx-auto max-w-5xl px-5 pb-4 sm:px-8">
-	<!-- Upload — the only thing on the page until a photo arrives -->
-	<div id="upload-state" class="settle mx-auto mt-10 w-full max-w-md" style="--tilt:-1deg; --delay:.2s">
-		<div
-			id="upload-card"
-			class="rounded-2xl border border-ink/20 bg-card p-4 shadow-lift transition-[transform,box-shadow] duration-200 sm:p-5"
-		>
-			<label for="photo-input" id="dropzone" class="block cursor-pointer">
-				<div id="window" class="relative aspect-[4/3] overflow-hidden rounded-lg">
-					<span class="crop top-2 left-2 border-t-2 border-l-2" aria-hidden="true"></span>
-					<span class="crop top-2 right-2 border-t-2 border-r-2" aria-hidden="true"></span>
-					<span class="crop bottom-2 left-2 border-b-2 border-l-2" aria-hidden="true"></span>
-					<span class="crop right-2 bottom-2 border-r-2 border-b-2" aria-hidden="true"></span>
-					<div class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-						<svg
-							class="h-10 w-10 text-olive"
-							viewBox="0 0 40 40"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="2"
-							aria-hidden="true"
-						>
-							<rect x="4" y="10" width="32" height="24" rx="3"></rect>
-							<circle cx="20" cy="22" r="7"></circle>
-							<path d="M14 10l3-4h6l3 4"></path>
-						</svg>
-						<p class="font-display text-xl font-extrabold tracking-tight text-spruce uppercase">
-							Drop a photo here
-						</p>
-						<p class="text-xs text-olive">or click to browse</p>
-					</div>
-				</div>
-			</label>
-			<input id="photo-input" type="file" accept="image/*" class="sr-only" />
-			<p class="mt-3 text-center text-[11px] font-bold tracking-[0.18em] text-verm uppercase">
-				▸ This side toward screen
-			</p>
-		</div>
-	</div>
-
-	<!-- Result — photo left, field note on paper right -->
-	<div id="result-state" hidden class="mt-10" style="--tilt:0deg">
-		<figure
-			id="specimen-card"
-			class="grid overflow-hidden rounded-xl border border-ink/15 shadow-lift lg:grid-cols-2"
-		>
-			<div id="photo-panel" class="relative aspect-[4/3] bg-spruce lg:aspect-auto">
-				<img id="photo" alt="Your uploaded photo" class="absolute inset-0 h-full w-full object-cover" />
-				<img
-					id="photo-blur"
-					alt=""
-					aria-hidden="true"
-					class="absolute inset-0 h-full w-full object-cover"
-				/>
-			</div>
-			<figcaption
-				id="paper"
-				class="relative flex min-h-96 flex-col items-center justify-center px-8 py-16 sm:px-12 lg:min-h-[34rem]"
-			>
-				<p id="processing" hidden class="text-[13px] tracking-[0.2em] text-olive uppercase">
-					Examining specimen<span class="dots"></span>
-				</p>
-				<div id="print-wrap" class="w-3/5 max-w-70">
-					<canvas id="print" width="560" height="560" class="block w-full mix-blend-multiply"
-						aria-hidden="true"></canvas>
-					<div class="mt-8 space-y-1.5 text-[15px] tracking-[0.08em] text-ink/85">
-						<p id="line-title" class="min-h-[1.4em] font-bold"></p>
-						<p id="line-no" class="min-h-[1.4em]"></p>
-						<p id="line-tags" class="min-h-[1.4em]"></p>
-						<p id="line-year" class="min-h-[1.4em]"></p>
-					</div>
-				</div>
-			</figcaption>
-		</figure>
-		<div class="mt-6 text-center">
-			<button
-				id="reset-btn"
-				type="button"
-				class="cursor-pointer text-[11px] font-bold tracking-[0.2em] text-verm uppercase underline decoration-dashed underline-offset-4 hover:text-ink"
-			>
-				▸ File another photo
+<section id="desk" class="mx-auto w-full max-w-4xl px-5 sm:px-8">
+	<div id="card-wrap" class="settle" style="--tilt:0deg; --delay:.1s">
+		<!-- Filing tabs tucked behind the card's top edge -->
+		<div class="flex items-end justify-between px-5 sm:px-9">
+			<button id="upload-btn" type="button" class="tab">
+				<span class="text-verm" aria-hidden="true">▸</span> File a photo
+			</button>
+			<button id="download-btn" type="button" class="tab">
+				Keep the card <span class="text-verm" aria-hidden="true">▸</span>
 			</button>
 		</div>
+		<input id="photo-input" type="file" accept="image/*" class="sr-only" />
+
+	<!-- The specimen card: photo left, field note on paper right -->
+	<figure
+		id="specimen-card"
+		class="relative z-10 grid overflow-hidden rounded-xl border border-ink/15 shadow-lift lg:grid-cols-2"
+	>
+		<div id="photo-panel" class="relative aspect-[4/3] bg-spruce lg:aspect-auto">
+			<img id="photo" alt="Filed photo" class="absolute inset-0 h-full w-full object-cover" />
+			<img
+				id="photo-blur"
+				alt=""
+				aria-hidden="true"
+				class="absolute inset-0 h-full w-full object-cover"
+			/>
+		</div>
+		<figcaption
+			id="paper"
+			class="relative flex min-h-96 flex-col items-center justify-center px-8 py-16 sm:px-12 lg:min-h-[30rem]"
+		>
+			<p id="processing" hidden class="text-[13px] tracking-[0.2em] text-olive uppercase">
+				Examining specimen<span class="dots"></span>
+			</p>
+			<div id="print-wrap" class="w-3/5 max-w-70">
+				<canvas id="print" width="560" height="560" class="block w-full mix-blend-multiply"
+					aria-hidden="true"></canvas>
+				<div class="mt-8 space-y-1.5 text-[15px] tracking-[0.08em] text-ink/85">
+					<p id="line-title" class="min-h-[1.4em] font-bold"></p>
+					<p id="line-no" class="min-h-[1.4em]"></p>
+					<p id="line-tags" class="min-h-[1.4em]"></p>
+					<p id="line-year" class="min-h-[1.4em]"></p>
+				</div>
+			</div>
+		</figcaption>
+	</figure>
 	</div>
+
+	<p
+		id="caption"
+		class="rise mt-4 text-center text-[11px] tracking-[0.2em] text-olive uppercase"
+		style="--delay:.35s"
+	>
+		Sample specimen · drop a photo anywhere
+	</p>
 
 	<p id="upload-status" class="sr-only" role="status" aria-live="polite"></p>
 </section>
 
 <style>
-	.crop {
-		position: absolute;
-		width: 14px;
-		height: 14px;
-		border-color: color-mix(in oklab, var(--color-spruce) 55%, transparent);
-		z-index: 2;
-		pointer-events: none;
+	/* Filing tabs: manila index tabs that read as tucked behind the card's top edge.
+	   Each tab is taller than it looks — the bottom .8rem hides under the card
+	   (negative margin, card at z-10), so sliding up on hover reveals more tab
+	   the way a real folder tab lifts out of a drawer. */
+	.tab {
+		position: relative;
+		height: 3.4rem;
+		margin-bottom: -0.8rem;
+		padding: 0.6rem 1.1rem 1.4rem;
+		border: 1px solid color-mix(in oklab, var(--color-ink) 22%, transparent);
+		border-bottom: none;
+		border-radius: 0.6rem 0.6rem 0 0;
+		/* Mustard-manila stock: plain manila vanishes against the paper background */
+		background-color: color-mix(in oklab, var(--color-ochre) 26%, var(--color-manila));
+		background-image: var(--paper-mottle);
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--color-spruce);
+		cursor: pointer;
+		transition:
+			transform 160ms ease,
+			color 160ms ease;
+	}
+	@media (min-width: 40rem) {
+		.tab {
+			font-size: 11px;
+			letter-spacing: 0.18em;
+			padding-inline: 1.4rem;
+		}
+	}
+	.tab:hover {
+		transform: translateY(-6px);
+		color: var(--color-ink);
+	}
+	.tab:active {
+		transform: translateY(-2px);
 	}
 
-	#window {
-		border: 2px dashed color-mix(in oklab, var(--color-ink) 35%, transparent);
-		background-color: color-mix(in oklab, var(--color-spruce) 6%, transparent);
-		transition:
-			border-color 200ms ease,
-			background-color 200ms ease;
+	/* Dropping a photo anywhere on the page files it; the card signals it's the target */
+	#specimen-card {
+		transition: outline-color 150ms ease;
+		outline: 2px dashed transparent;
+		outline-offset: 8px;
 	}
-	#dropzone:hover #window,
-	#dropzone.drag #window {
-		border-color: var(--color-verm);
-		background-color: color-mix(in oklab, var(--color-butter) 45%, transparent);
-	}
-	#dropzone.drag #window {
-		border-style: solid;
-	}
-	#upload-card:has(#dropzone:hover) {
-		transform: translateY(-2px);
-		box-shadow:
-			0 2px 3px rgb(38 42 32 / 0.08),
-			0 12px 28px rgb(38 42 32 / 0.14);
-	}
-	#dropzone:has(~ #photo-input:focus-visible) #window {
-		outline: 2px dashed var(--color-verm);
-		outline-offset: 4px;
+	#specimen-card.drag {
+		outline-color: var(--color-verm);
 	}
 
 	/* The card is one sheet of paper: the figure paints the paper face and its mottle
@@ -285,16 +271,17 @@
 </style>
 
 <script>
-	const uploadState = document.getElementById("upload-state")!;
-	const resultState = document.getElementById("result-state")!;
+	const card = document.getElementById("specimen-card")!;
+	const cardWrap = document.getElementById("card-wrap")!;
 	const input = document.getElementById("photo-input") as HTMLInputElement;
-	const dropzone = document.getElementById("dropzone")!;
+	const uploadBtn = document.getElementById("upload-btn")!;
+	const downloadBtn = document.getElementById("download-btn")!;
 	const photo = document.getElementById("photo") as HTMLImageElement;
 	const photoBlur = document.getElementById("photo-blur") as HTMLImageElement;
 	const processing = document.getElementById("processing")!;
 	const printWrap = document.getElementById("print-wrap")!;
 	const canvas = document.getElementById("print") as HTMLCanvasElement;
-	const resetBtn = document.getElementById("reset-btn")!;
+	const caption = document.getElementById("caption")!;
 	const status = document.getElementById("upload-status")!;
 	const lineEls = ["line-title", "line-no", "line-tags", "line-year"].map(
 		(id) => document.getElementById(id)!
@@ -303,6 +290,11 @@
 	const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 	let objectUrl: string | null = null;
 	let runId = 0;
+	let ready = false;
+
+	const seasons = ["WINTER", "WINTER", "SPRING", "SPRING", "SPRING", "SUMMER", "SUMMER", "SUMMER", "FALL", "FALL", "FALL", "WINTER"];
+	const now = new Date();
+	const seasonMark = `${seasons[now.getMonth()]} ${now.getFullYear()}`;
 
 	const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -361,20 +353,19 @@
 		el.classList.remove("typing");
 	}
 
-	async function process(src: string) {
+	async function process(src: string, opts: { instant?: boolean; lines?: string[] } = {}) {
+		const { instant = false, lines: preset } = opts;
 		const id = ++runId;
+		ready = false;
 		photo.src = src;
 		photoBlur.src = src;
-		uploadState.hidden = true;
-		resultState.hidden = false;
-		retrigger(resultState, "settle");
-		processing.hidden = false;
+		processing.hidden = instant;
 		printWrap.classList.remove("developed");
 		lineEls.forEach((el) => {
 			el.textContent = "";
 			el.classList.remove("typing");
 		});
-		status.textContent = "Photo received. Examining specimen.";
+		if (!instant) status.textContent = "Photo received. Examining specimen.";
 
 		try {
 			await photo.decode();
@@ -382,19 +373,21 @@
 		if (runId !== id) return;
 		makePrint();
 
-		await sleep(reduced ? 200 : 1500);
-		if (runId !== id) return;
+		if (!instant) {
+			await sleep(reduced ? 200 : 1500);
+			if (runId !== id) return;
+		}
 		processing.hidden = true;
 		printWrap.classList.add("developed");
 
 		// Placeholder field notes until Cloudflare AI writes the real ones
-		const lines = [
+		const lines = preset ?? [
 			"SPECIMEN",
 			`No. ${String(nextFileNumber()).padStart(2, "0")}`,
 			"light / shape / time",
-			String(new Date().getFullYear()),
+			seasonMark,
 		];
-		if (reduced) {
+		if (instant || reduced) {
 			lineEls.forEach((el, i) => (el.textContent = lines[i]));
 		} else {
 			await sleep(400);
@@ -403,6 +396,7 @@
 				await typeLine(lineEls[i], lines[i], id);
 			}
 		}
+		ready = true;
 		status.textContent = "Field note ready.";
 	}
 
@@ -413,47 +407,107 @@
 		}
 		if (objectUrl) URL.revokeObjectURL(objectUrl);
 		objectUrl = URL.createObjectURL(file);
+		caption.textContent = "Your specimen, filed";
+		retrigger(cardWrap, "settle");
 		process(objectUrl);
 	}
 
-	function reset() {
-		runId++;
-		resultState.hidden = true;
-		uploadState.hidden = false;
-		retrigger(uploadState, "settle");
-		if (objectUrl) URL.revokeObjectURL(objectUrl);
-		objectUrl = null;
-		photo.removeAttribute("src");
-		photoBlur.removeAttribute("src");
-		input.value = "";
-		status.textContent = "The desk is empty.";
+	// Flatten the card — photo, print, and typed lines — into one PNG
+	async function download() {
+		if (!ready) {
+			status.textContent = "Still examining the specimen — one moment.";
+			return;
+		}
+		const W = 1800;
+		const H = 900;
+		const out = document.createElement("canvas");
+		out.width = W;
+		out.height = H;
+		const ctx = out.getContext("2d");
+		const iw = photo.naturalWidth;
+		const ih = photo.naturalHeight;
+		if (!ctx || !iw || !ih) return;
+
+		try {
+			await Promise.all([
+				document.fonts.load('700 27px "Courier Prime"'),
+				document.fonts.load('27px "Courier Prime"'),
+			]);
+		} catch {}
+
+		ctx.beginPath();
+		ctx.roundRect(0, 0, W, H, 28);
+		ctx.clip();
+
+		// Paper face across the whole sheet
+		ctx.fillStyle = "#f4efdf";
+		ctx.fillRect(0, 0, W, H);
+
+		// Photo on the left, centre-cropped square
+		const crop = Math.min(iw, ih);
+		ctx.drawImage(photo, (iw - crop) / 2, (ih - crop) / 2, crop, crop, 0, 0, H, H);
+
+		// Fade the photo's right edge into the paper, echoing the on-screen seam
+		const seam = ctx.createLinearGradient(H - 80, 0, H, 0);
+		seam.addColorStop(0, "rgba(244, 239, 223, 0)");
+		seam.addColorStop(1, "rgba(244, 239, 223, 1)");
+		ctx.fillStyle = seam;
+		ctx.fillRect(H - 80, 0, 80, H);
+
+		// The print and its field notes on the right half
+		const cx = H + (W - H) / 2;
+		ctx.drawImage(canvas, cx - 220, 130, 440, 440);
+		ctx.textAlign = "center";
+		ctx.fillStyle = "rgba(38, 42, 32, 0.85)";
+		try {
+			(ctx as any).letterSpacing = "2px";
+		} catch {}
+		const texts = lineEls.map((el) => el.textContent || "");
+		ctx.font = '700 27px "Courier Prime", monospace';
+		ctx.fillText(texts[0], cx, 662);
+		ctx.font = '27px "Courier Prime", monospace';
+		texts.slice(1).forEach((t, i) => ctx.fillText(t, cx, 706 + i * 44));
+
+		const slug = (texts[0] || "specimen").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "specimen";
+		const a = document.createElement("a");
+		a.download = `field-note-${slug}.png`;
+		a.href = out.toDataURL("image/png");
+		a.click();
+		status.textContent = "Card downloaded.";
 	}
+
+	uploadBtn.addEventListener("click", () => input.click());
+	downloadBtn.addEventListener("click", download);
 
 	input.addEventListener("change", () => {
 		const file = input.files?.[0];
 		if (file) setPhoto(file);
 	});
 
+	// Dropping a photo anywhere on the page files it
 	for (const type of ["dragenter", "dragover"]) {
-		dropzone.addEventListener(type, (event) => {
+		window.addEventListener(type, (event) => {
 			event.preventDefault();
-			dropzone.classList.add("drag");
+			card.classList.add("drag");
 		});
 	}
-	for (const type of ["dragleave", "drop"]) {
-		dropzone.addEventListener(type, () => dropzone.classList.remove("drag"));
-	}
-	dropzone.addEventListener("drop", (event) => {
+	window.addEventListener("dragleave", (event: DragEvent) => {
+		if (!event.relatedTarget) card.classList.remove("drag");
+	});
+	window.addEventListener("drop", (event: DragEvent) => {
 		event.preventDefault();
+		card.classList.remove("drag");
 		const file = event.dataTransfer?.files?.[0];
 		if (file) setPhoto(file);
 	});
 
-	resetBtn.addEventListener("click", reset);
+	// The sample specimen, already examined and filed
+	const sampleLines = ["COLOSSEUM", "No. 01", "travertine / arches / low sun", seasonMark];
 
-	// ?demo runs the whole flow with a sample specimen
+	// ?demo replays the full examination on the sample
 	if (new URLSearchParams(location.search).has("demo")) {
-		const sample = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='800' height='600' fill='#9aa77f'/><circle cx='620' cy='140' r='64' fill='#efe5a9'/><path d='M0 430 L230 240 L430 430 Z' fill='#35493f'/><path d='M260 430 L520 190 L800 430 Z' fill='#2c3e35'/><rect y='430' width='800' height='170' fill='#5c6b4f'/></svg>`;
-		process(`data:image/svg+xml,${encodeURIComponent(sample)}`);
+		process("/colosseum.jpg", { lines: sampleLines });
+	} else {
+		process("/colosseum.jpg", { instant: true, lines: sampleLines });
 	}
 </script>

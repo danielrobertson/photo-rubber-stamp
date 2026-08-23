@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
     <circle cx="64" cy="64" r="58" fill="none" stroke="#C04B24" stroke-width="8"/>
     <circle cx="64" cy="64" r="40" fill="none" stroke="#C04B24" stroke-width="4"/>
-    <text x="64" y="74" text-anchor="middle" font-family="Courier, monospace" font-weight="700" font-size="30" letter-spacing="2" fill="#C04B24">PRS</text>
+    <text x="64" y="74" text-anchor="middle" font-family="Courier, monospace" font-weight="700" font-size="30" letter-spacing="2" fill="#C04B24">IFN</text>
 </svg>

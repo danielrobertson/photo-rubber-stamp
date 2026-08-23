@@ -1,0 +1,80 @@
+---
+// Dedicated 1200×630 route for capturing the social share image.
+// Not linked from the app; visit directly and screenshot at exactly 1200×630.
+import "../styles/global.css";
+---
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..900&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="og" class="relative overflow-hidden bg-paper" style="width:1200px;height:630px;">
+			<!-- Paper grain, matching the app's card stock -->
+			<div
+				class="absolute inset-0"
+				style={`background-image: var(--paper-mottle); mix-blend-mode: multiply; opacity: 0.5;`}
+			>
+			</div>
+
+			<!-- Copy block -->
+			<div class="absolute top-[76px] left-[76px] max-w-[520px]">
+				<p class="mb-4 text-[13px] font-bold tracking-[0.32em] text-olive uppercase">
+					Field Office Form
+				</p>
+				<h1 class="font-display text-[58px] leading-[1.02] font-black tracking-tight text-ink">
+					Image to<br />Field Notes
+				</h1>
+				<p class="mt-6 text-[17px] leading-[1.55] tracking-[0.01em] text-ink/70">
+					Upload a photo. Get it back stamped with proper field notes — subject, date sighted,
+					and observations, filed by the identification desk.
+				</p>
+			</div>
+
+			<!-- Specimen card mockup -->
+			<div
+				class="absolute top-[132px] left-[660px] w-[430px] overflow-hidden rounded-xl border border-ink/15"
+				style="transform: rotate(3deg); box-shadow: 0 1px 2px rgb(38 42 32 / 0.12), 0 20px 40px rgb(38 42 32 / 0.22); background-color: var(--paper-face); background-image: var(--paper-mottle);"
+			>
+				<div class="relative h-[190px] w-full bg-spruce">
+					<img src="/colosseum.jpg" alt="" class="absolute inset-0 h-full w-full object-cover" />
+				</div>
+				<div class="px-8 py-7">
+					<p class="text-[15px] font-bold tracking-[0.06em] text-ink">COLOSSEUM</p>
+					<p class="mt-1.5 text-[13px] tracking-[0.06em] text-ink/70">No. 01</p>
+					<p class="mt-1.5 text-[13px] tracking-[0.06em] text-ink/70">travertine · arches · low sun</p>
+					<p class="mt-1.5 text-[13px] tracking-[0.06em] text-ink/70">low season 2026</p>
+				</div>
+			</div>
+
+			<!-- Rubber-stamp mark -->
+			<div
+				class="absolute top-[420px] left-[76px] text-[14px] font-bold tracking-[0.24em] text-verm uppercase"
+				style="transform: rotate(-9deg); border: 3px solid currentColor; border-radius: 6px; padding: 6px 14px; opacity: 0.85;"
+			>
+				Specimen filed
+			</div>
+
+			<!-- Footer rule + URL -->
+			<div class="absolute right-[76px] bottom-[56px] left-[76px]">
+				<div class="border-t border-ink/20"></div>
+				<p class="mt-4 text-[13px] tracking-[0.22em] text-olive uppercase">
+					image-to-field-notes.danielrobertson733.workers.dev
+				</p>
+			</div>
+		</div>
+	</body>
+</html>

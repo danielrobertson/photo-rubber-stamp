@@ -6,10 +6,15 @@ interface Props {
 	description?: string;
 }
 
+const SITE_URL = "https://image-to-field-notes.danielrobertson733.workers.dev";
+const OG_IMAGE = `${SITE_URL}/og-image.png`;
+
 const {
-	title = "Photo Rubber Stamp — Field Notes for Every Photo",
+	title = "Image to Field Notes",
 	description = "Upload a photo and get it back stamped with proper field notes: subject, date sighted, and observations, written up by the identification desk.",
 } = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
 ---
 
 <html lang="en">
@@ -20,7 +25,28 @@ const {
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<meta name="description" content={description} />
+		<meta name="theme-color" content="#e9e2cb" />
+		<link rel="canonical" href={canonicalURL} />
 		<title>{title}</title>
+
+		<!-- Open Graph -->
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content={canonicalURL} />
+		<meta property="og:site_name" content="Image to Field Notes" />
+		<meta property="og:locale" content="en_US" />
+		<meta property="og:title" content={title} />
+		<meta property="og:description" content={description} />
+		<meta property="og:image" content={OG_IMAGE} />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="A specimen card: a photo on the left, paired with typed field notes — subject, number, tags, and date — on aged paper stock." />
+
+		<!-- Twitter -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:title" content={title} />
+		<meta name="twitter:description" content={description} />
+		<meta name="twitter:image" content={OG_IMAGE} />
+
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link

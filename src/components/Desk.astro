@@ -40,7 +40,10 @@
 
 	<!-- Result — photo left, field note on paper right -->
 	<div id="result-state" hidden class="mt-10" style="--tilt:0deg">
-		<figure class="grid overflow-hidden rounded-xl border border-ink/15 shadow-lift lg:grid-cols-2">
+		<figure
+			id="specimen-card"
+			class="grid overflow-hidden rounded-xl border border-ink/15 shadow-lift lg:grid-cols-2"
+		>
 			<div id="photo-panel" class="relative aspect-[4/3] bg-spruce lg:aspect-auto">
 				<img id="photo" alt="Your uploaded photo" class="absolute inset-0 h-full w-full object-cover" />
 				<img
@@ -49,7 +52,6 @@
 					aria-hidden="true"
 					class="absolute inset-0 h-full w-full object-cover"
 				/>
-				<div class="dissolve" aria-hidden="true"></div>
 			</div>
 			<figcaption
 				id="paper"
@@ -120,12 +122,39 @@
 		outline-offset: 4px;
 	}
 
-	/* The photo dissolves into the paper right at the seam. A blurred copy of the
-	   photo cross-fades in over the last ~26px, under a wash to the paper colour that
-	   goes solid just before the edge. Both ramps open at a few percent alpha, so
-	   neither the start nor the end of the fade draws a line — and the blurred copy's
-	   own soft edge sits under paper that is already opaque.
+	/* The card is one sheet of paper: the figure paints the paper face and its mottle
+	   across both halves, so the grain runs unbroken through the seam. The photo panel
+	   simply thins to nothing over the last 64px and lets that sheet show through —
+	   nothing is painted *over* the photo, so there is no lighter patch to spot.
+	   A blurred copy of the photo cross-fades in over the last 26px, opening at 6%
+	   alpha so the start of the blur has no edge.
 	   Stacked layouts blend the bottom edge; side-by-side blends the right edge. */
+	#specimen-card {
+		background-color: var(--paper-face);
+		background-image: var(--paper-mottle);
+	}
+	#photo-panel {
+		mask-image: linear-gradient(
+			to bottom,
+			rgb(0 0 0 / 1) calc(100% - 64px),
+			rgb(0 0 0 / 0.97) calc(100% - 54px),
+			rgb(0 0 0 / 0.88) calc(100% - 42px),
+			rgb(0 0 0 / 0.68) calc(100% - 30px),
+			rgb(0 0 0 / 0.4) calc(100% - 20px),
+			rgb(0 0 0 / 0.15) calc(100% - 12px),
+			rgb(0 0 0 / 0) calc(100% - 5px)
+		);
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			rgb(0 0 0 / 1) calc(100% - 64px),
+			rgb(0 0 0 / 0.97) calc(100% - 54px),
+			rgb(0 0 0 / 0.88) calc(100% - 42px),
+			rgb(0 0 0 / 0.68) calc(100% - 30px),
+			rgb(0 0 0 / 0.4) calc(100% - 20px),
+			rgb(0 0 0 / 0.15) calc(100% - 12px),
+			rgb(0 0 0 / 0) calc(100% - 5px)
+		);
+	}
 	#photo-blur {
 		z-index: 1;
 		pointer-events: none;
@@ -147,23 +176,29 @@
 			rgb(0 0 0 / 1) 100%
 		);
 	}
-	.dissolve {
-		position: absolute;
-		inset: 0;
-		z-index: 2;
-		pointer-events: none;
-		background: linear-gradient(
-			to bottom,
-			rgb(244 239 223 / 0) calc(100% - 64px),
-			rgb(244 239 223 / 0.03) calc(100% - 54px),
-			rgb(244 239 223 / 0.12) calc(100% - 42px),
-			rgb(244 239 223 / 0.32) calc(100% - 30px),
-			rgb(244 239 223 / 0.6) calc(100% - 20px),
-			rgb(244 239 223 / 0.85) calc(100% - 12px),
-			rgb(244 239 223 / 1) calc(100% - 5px)
-		);
-	}
 	@media (min-width: 64rem) {
+		#photo-panel {
+			mask-image: linear-gradient(
+				to right,
+				rgb(0 0 0 / 1) calc(100% - 64px),
+				rgb(0 0 0 / 0.97) calc(100% - 54px),
+				rgb(0 0 0 / 0.88) calc(100% - 42px),
+				rgb(0 0 0 / 0.68) calc(100% - 30px),
+				rgb(0 0 0 / 0.4) calc(100% - 20px),
+				rgb(0 0 0 / 0.15) calc(100% - 12px),
+				rgb(0 0 0 / 0) calc(100% - 5px)
+			);
+			-webkit-mask-image: linear-gradient(
+				to right,
+				rgb(0 0 0 / 1) calc(100% - 64px),
+				rgb(0 0 0 / 0.97) calc(100% - 54px),
+				rgb(0 0 0 / 0.88) calc(100% - 42px),
+				rgb(0 0 0 / 0.68) calc(100% - 30px),
+				rgb(0 0 0 / 0.4) calc(100% - 20px),
+				rgb(0 0 0 / 0.15) calc(100% - 12px),
+				rgb(0 0 0 / 0) calc(100% - 5px)
+			);
+		}
 		#photo-blur {
 			mask-image: linear-gradient(
 				to right,
@@ -182,23 +217,9 @@
 				rgb(0 0 0 / 1) 100%
 			);
 		}
-		.dissolve {
-			background: linear-gradient(
-				to right,
-				rgb(244 239 223 / 0) calc(100% - 64px),
-				rgb(244 239 223 / 0.03) calc(100% - 54px),
-				rgb(244 239 223 / 0.12) calc(100% - 42px),
-				rgb(244 239 223 / 0.32) calc(100% - 30px),
-				rgb(244 239 223 / 0.6) calc(100% - 20px),
-				rgb(244 239 223 / 0.85) calc(100% - 12px),
-				rgb(244 239 223 / 1) calc(100% - 5px)
-			);
-		}
 	}
 
 	#paper {
-		background-color: #f4efdf;
-		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.06'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
 		/* Inner shading kept off the seam edge so the photo fade stays seamless */
 		box-shadow: inset 0 -70px 70px -45px rgb(38 42 32 / 0.09);
 	}

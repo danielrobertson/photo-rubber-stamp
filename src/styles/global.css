@@ -19,6 +19,13 @@
   --shadow-lift: 0 1px 2px rgb(38 42 32 / 0.1), 0 8px 20px rgb(38 42 32 / 0.1);
 }
 
+:root {
+  /* The specimen card's paper face: colour plus its soft mottle, kept together so
+     any surface that has to read as the same sheet can paint both. */
+  --paper-face: #f4efdf;
+  --paper-mottle: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.06'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+}
+
 @layer base {
   body {
     background-color: var(--color-paper);

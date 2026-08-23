@@ -1,20 +1,23 @@
 ---
-import "../styles/global.css";
+import Base from "../layouts/Base.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import Desk from "../components/Desk.astro";
+import SiteFooter from "../components/SiteFooter.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Photo Rubber Stamp</title>
-	</head>
-	<body class="min-h-screen bg-slate-950 text-slate-100 antialiased">
-		<main class="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center gap-4 px-6 text-center">
-			<h1 class="text-4xl font-bold tracking-tight">Photo Rubber Stamp</h1>
-			<p class="text-slate-400">Astro + Tailwind, ready to deploy on Cloudflare Workers.</p>
-		</main>
-	</body>
-</html>
+<Base>
+	<SiteHeader />
+	<main>
+		<section class="mx-auto max-w-2xl px-5 pt-14 text-center sm:px-8 lg:pt-20">
+			<h1
+				class="rise font-display text-4xl font-black tracking-tight text-balance text-ink sm:text-5xl"
+				style="--delay:.05s"
+			>
+				Give every photo its field notes.
+			</h1>
+		</section>
+
+		<Desk />
+	</main>
+	<SiteFooter />
+</Base>

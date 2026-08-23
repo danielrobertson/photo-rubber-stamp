@@ -1,0 +1,61 @@
+---
+// Circular rubber-stamp mark. Rendered in currentColor so callers set the ink.
+interface Props {
+	ring?: string;
+	center?: string;
+	sub?: string;
+	class?: string;
+}
+
+const {
+	ring = "PHOTO RUBBER STAMP · FIELD DEPT. ·",
+	center = "PHS",
+	sub = "",
+	class: className = "",
+} = Astro.props;
+
+const uid = "arc-" + Math.random().toString(36).slice(2, 8);
+---
+
+<svg viewBox="0 0 120 120" class={className} aria-hidden="true">
+	<circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width="3"></circle>
+	<circle cx="60" cy="60" r="41" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+	<defs>
+		<path id={uid} d="M60,60 m-48.5,0 a48.5,48.5 0 1,1 97,0 a48.5,48.5 0 1,1 -97,0" fill="none"
+		></path>
+	</defs>
+	<text
+		fill="currentColor"
+		font-size="10"
+		letter-spacing="2.4"
+		font-family="'Courier Prime', monospace"
+		font-weight="700"
+	>
+		<textPath href={`#${uid}`}>{ring}</textPath>
+	</text>
+	<text
+		x="60"
+		y={sub ? "58" : "64"}
+		text-anchor="middle"
+		fill="currentColor"
+		font-size="13"
+		letter-spacing="2"
+		font-family="'Courier Prime', monospace"
+		font-weight="700">{center}</text
+	>
+	{
+		sub && (
+			<text
+				x="60"
+				y="73"
+				text-anchor="middle"
+				fill="currentColor"
+				font-size="8.5"
+				letter-spacing="1.2"
+				font-family="'Courier Prime', monospace"
+			>
+				{sub}
+			</text>
+		)
+	}
+</svg>

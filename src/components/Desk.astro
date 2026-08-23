@@ -1,0 +1,438 @@
+<section id="desk" class="mx-auto max-w-5xl px-5 pb-4 sm:px-8">
+	<!-- Upload — the only thing on the page until a photo arrives -->
+	<div id="upload-state" class="settle mx-auto mt-10 w-full max-w-md" style="--tilt:-1deg; --delay:.2s">
+		<div
+			id="upload-card"
+			class="rounded-2xl border border-ink/20 bg-card p-4 shadow-lift transition-[transform,box-shadow] duration-200 sm:p-5"
+		>
+			<label for="photo-input" id="dropzone" class="block cursor-pointer">
+				<div id="window" class="relative aspect-[4/3] overflow-hidden rounded-lg">
+					<span class="crop top-2 left-2 border-t-2 border-l-2" aria-hidden="true"></span>
+					<span class="crop top-2 right-2 border-t-2 border-r-2" aria-hidden="true"></span>
+					<span class="crop bottom-2 left-2 border-b-2 border-l-2" aria-hidden="true"></span>
+					<span class="crop right-2 bottom-2 border-r-2 border-b-2" aria-hidden="true"></span>
+					<div class="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+						<svg
+							class="h-10 w-10 text-olive"
+							viewBox="0 0 40 40"
+							fill="none"
+							stroke="currentColor"
+							stroke-width="2"
+							aria-hidden="true"
+						>
+							<rect x="4" y="10" width="32" height="24" rx="3"></rect>
+							<circle cx="20" cy="22" r="7"></circle>
+							<path d="M14 10l3-4h6l3 4"></path>
+						</svg>
+						<p class="font-display text-xl font-extrabold tracking-tight text-spruce uppercase">
+							Drop a photo here
+						</p>
+						<p class="text-xs text-olive">or click to browse</p>
+					</div>
+				</div>
+			</label>
+			<input id="photo-input" type="file" accept="image/*" class="sr-only" />
+			<p class="mt-3 text-center text-[11px] font-bold tracking-[0.18em] text-verm uppercase">
+				▸ This side toward screen
+			</p>
+		</div>
+	</div>
+
+	<!-- Result — photo left, field note on paper right -->
+	<div id="result-state" hidden class="mt-10" style="--tilt:0deg">
+		<figure class="grid overflow-hidden rounded-xl border border-ink/15 shadow-lift lg:grid-cols-2">
+			<div id="photo-panel" class="relative aspect-[4/3] bg-spruce lg:aspect-auto">
+				<img id="photo" alt="Your uploaded photo" class="absolute inset-0 h-full w-full object-cover" />
+				<img
+					id="photo-blur"
+					alt=""
+					aria-hidden="true"
+					class="absolute inset-0 h-full w-full object-cover"
+				/>
+				<div class="dissolve" aria-hidden="true"></div>
+			</div>
+			<figcaption
+				id="paper"
+				class="relative flex min-h-96 flex-col items-center justify-center px-8 py-16 sm:px-12 lg:min-h-[34rem]"
+			>
+				<p id="processing" hidden class="text-[13px] tracking-[0.2em] text-olive uppercase">
+					Examining specimen<span class="dots"></span>
+				</p>
+				<div id="print-wrap" class="w-3/5 max-w-70">
+					<canvas id="print" width="560" height="560" class="block w-full mix-blend-multiply"
+						aria-hidden="true"></canvas>
+					<div class="mt-8 space-y-1.5 text-[15px] tracking-[0.08em] text-ink/85">
+						<p id="line-title" class="min-h-[1.4em] font-bold"></p>
+						<p id="line-no" class="min-h-[1.4em]"></p>
+						<p id="line-tags" class="min-h-[1.4em]"></p>
+						<p id="line-year" class="min-h-[1.4em]"></p>
+					</div>
+				</div>
+			</figcaption>
+		</figure>
+		<div class="mt-6 text-center">
+			<button
+				id="reset-btn"
+				type="button"
+				class="cursor-pointer text-[11px] font-bold tracking-[0.2em] text-verm uppercase underline decoration-dashed underline-offset-4 hover:text-ink"
+			>
+				▸ File another photo
+			</button>
+		</div>
+	</div>
+
+	<p id="upload-status" class="sr-only" role="status" aria-live="polite"></p>
+</section>
+
+<style>
+	.crop {
+		position: absolute;
+		width: 14px;
+		height: 14px;
+		border-color: color-mix(in oklab, var(--color-spruce) 55%, transparent);
+		z-index: 2;
+		pointer-events: none;
+	}
+
+	#window {
+		border: 2px dashed color-mix(in oklab, var(--color-ink) 35%, transparent);
+		background-color: color-mix(in oklab, var(--color-spruce) 6%, transparent);
+		transition:
+			border-color 200ms ease,
+			background-color 200ms ease;
+	}
+	#dropzone:hover #window,
+	#dropzone.drag #window {
+		border-color: var(--color-verm);
+		background-color: color-mix(in oklab, var(--color-butter) 45%, transparent);
+	}
+	#dropzone.drag #window {
+		border-style: solid;
+	}
+	#upload-card:has(#dropzone:hover) {
+		transform: translateY(-2px);
+		box-shadow:
+			0 2px 3px rgb(38 42 32 / 0.08),
+			0 12px 28px rgb(38 42 32 / 0.14);
+	}
+	#dropzone:has(~ #photo-input:focus-visible) #window {
+		outline: 2px dashed var(--color-verm);
+		outline-offset: 4px;
+	}
+
+	/* The photo dissolves into the paper right at the seam. A blurred copy of the
+	   photo cross-fades in over the last ~26px, under a wash to the paper colour that
+	   goes solid just before the edge. Both ramps open at a few percent alpha, so
+	   neither the start nor the end of the fade draws a line — and the blurred copy's
+	   own soft edge sits under paper that is already opaque.
+	   Stacked layouts blend the bottom edge; side-by-side blends the right edge. */
+	#photo-blur {
+		z-index: 1;
+		pointer-events: none;
+		filter: blur(8px);
+		mask-image: linear-gradient(
+			to bottom,
+			rgb(0 0 0 / 0) calc(100% - 26px),
+			rgb(0 0 0 / 0.06) calc(100% - 20px),
+			rgb(0 0 0 / 0.3) calc(100% - 13px),
+			rgb(0 0 0 / 0.72) calc(100% - 6px),
+			rgb(0 0 0 / 1) 100%
+		);
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			rgb(0 0 0 / 0) calc(100% - 26px),
+			rgb(0 0 0 / 0.06) calc(100% - 20px),
+			rgb(0 0 0 / 0.3) calc(100% - 13px),
+			rgb(0 0 0 / 0.72) calc(100% - 6px),
+			rgb(0 0 0 / 1) 100%
+		);
+	}
+	.dissolve {
+		position: absolute;
+		inset: 0;
+		z-index: 2;
+		pointer-events: none;
+		background: linear-gradient(
+			to bottom,
+			rgb(244 239 223 / 0) calc(100% - 64px),
+			rgb(244 239 223 / 0.03) calc(100% - 54px),
+			rgb(244 239 223 / 0.12) calc(100% - 42px),
+			rgb(244 239 223 / 0.32) calc(100% - 30px),
+			rgb(244 239 223 / 0.6) calc(100% - 20px),
+			rgb(244 239 223 / 0.85) calc(100% - 12px),
+			rgb(244 239 223 / 1) calc(100% - 5px)
+		);
+	}
+	@media (min-width: 64rem) {
+		#photo-blur {
+			mask-image: linear-gradient(
+				to right,
+				rgb(0 0 0 / 0) calc(100% - 26px),
+				rgb(0 0 0 / 0.06) calc(100% - 20px),
+				rgb(0 0 0 / 0.3) calc(100% - 13px),
+				rgb(0 0 0 / 0.72) calc(100% - 6px),
+				rgb(0 0 0 / 1) 100%
+			);
+			-webkit-mask-image: linear-gradient(
+				to right,
+				rgb(0 0 0 / 0) calc(100% - 26px),
+				rgb(0 0 0 / 0.06) calc(100% - 20px),
+				rgb(0 0 0 / 0.3) calc(100% - 13px),
+				rgb(0 0 0 / 0.72) calc(100% - 6px),
+				rgb(0 0 0 / 1) 100%
+			);
+		}
+		.dissolve {
+			background: linear-gradient(
+				to right,
+				rgb(244 239 223 / 0) calc(100% - 64px),
+				rgb(244 239 223 / 0.03) calc(100% - 54px),
+				rgb(244 239 223 / 0.12) calc(100% - 42px),
+				rgb(244 239 223 / 0.32) calc(100% - 30px),
+				rgb(244 239 223 / 0.6) calc(100% - 20px),
+				rgb(244 239 223 / 0.85) calc(100% - 12px),
+				rgb(244 239 223 / 1) calc(100% - 5px)
+			);
+		}
+	}
+
+	#paper {
+		background-color: #f4efdf;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500'%3E%3Cfilter id='m'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.012' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.06'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23m)'/%3E%3C/svg%3E");
+		/* Inner shading kept off the seam edge so the photo fade stays seamless */
+		box-shadow: inset 0 -70px 70px -45px rgb(38 42 32 / 0.09);
+	}
+	@media (min-width: 64rem) {
+		#paper {
+			box-shadow: inset -70px 0 70px -45px rgb(38 42 32 / 0.09);
+		}
+	}
+
+	.dots::after {
+		content: "";
+		animation: dots 1.2s steps(1) infinite;
+	}
+	@keyframes dots {
+		0% {
+			content: "";
+		}
+		25% {
+			content: ".";
+		}
+		50% {
+			content: "..";
+		}
+		75% {
+			content: "...";
+		}
+	}
+
+	.typing::after {
+		content: "▌";
+		margin-left: 1px;
+		animation: blink 1s steps(1) infinite;
+	}
+	@keyframes blink {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	#print-wrap {
+		opacity: 0;
+	}
+	#print-wrap.developed {
+		opacity: 1;
+	}
+	@media (prefers-reduced-motion: no-preference) {
+		#print-wrap.developed {
+			animation: develop 0.8s ease-out both;
+		}
+	}
+	@keyframes develop {
+		from {
+			opacity: 0;
+			filter: blur(4px);
+			transform: scale(1.02);
+		}
+		to {
+			opacity: 1;
+			filter: blur(0);
+			transform: scale(1);
+		}
+	}
+</style>
+
+<script>
+	const uploadState = document.getElementById("upload-state")!;
+	const resultState = document.getElementById("result-state")!;
+	const input = document.getElementById("photo-input") as HTMLInputElement;
+	const dropzone = document.getElementById("dropzone")!;
+	const photo = document.getElementById("photo") as HTMLImageElement;
+	const photoBlur = document.getElementById("photo-blur") as HTMLImageElement;
+	const processing = document.getElementById("processing")!;
+	const printWrap = document.getElementById("print-wrap")!;
+	const canvas = document.getElementById("print") as HTMLCanvasElement;
+	const resetBtn = document.getElementById("reset-btn")!;
+	const status = document.getElementById("upload-status")!;
+	const lineEls = ["line-title", "line-no", "line-tags", "line-year"].map(
+		(id) => document.getElementById(id)!
+	);
+
+	const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+	let objectUrl: string | null = null;
+	let runId = 0;
+
+	const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+	function retrigger(el: HTMLElement, cls: string) {
+		el.classList.remove(cls);
+		void el.offsetWidth;
+		el.classList.add(cls);
+	}
+
+	function nextFileNumber(): number {
+		let n = 1;
+		try {
+			n = parseInt(localStorage.getItem("prs-no") || "0", 10) + 1;
+			localStorage.setItem("prs-no", String(n));
+		} catch {}
+		return n;
+	}
+
+	// Posterized spruce-ink print of the photo, drawn on transparent canvas so the paper shows through
+	function makePrint() {
+		const ctx = canvas.getContext("2d", { willReadFrequently: true });
+		const iw = photo.naturalWidth;
+		const ih = photo.naturalHeight;
+		if (!ctx || !iw || !ih) return;
+		const size = canvas.width;
+		ctx.clearRect(0, 0, size, size);
+		const crop = Math.min(iw, ih);
+		ctx.drawImage(photo, (iw - crop) / 2, (ih - crop) / 2, crop, crop, 0, 0, size, size);
+		const image = ctx.getImageData(0, 0, size, size);
+		const d = image.data;
+		for (let i = 0; i < d.length; i += 4) {
+			const luma = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+			const boosted = (luma - 128) * 1.4 + 128;
+			let alpha;
+			if (boosted > 190) alpha = 0;
+			else if (boosted > 150) alpha = 70;
+			else if (boosted > 105) alpha = 140;
+			else if (boosted > 55) alpha = 200;
+			else alpha = 255;
+			if (alpha > 0) alpha += Math.random() * 30 - 15;
+			d[i] = 56;
+			d[i + 1] = 72;
+			d[i + 2] = 62;
+			d[i + 3] = Math.max(0, Math.min(255, alpha));
+		}
+		ctx.putImageData(image, 0, 0);
+	}
+
+	async function typeLine(el: HTMLElement, text: string, id: number) {
+		el.classList.add("typing");
+		for (const char of text) {
+			if (runId !== id) return;
+			el.textContent += char;
+			await sleep(24);
+		}
+		el.classList.remove("typing");
+	}
+
+	async function process(src: string) {
+		const id = ++runId;
+		photo.src = src;
+		photoBlur.src = src;
+		uploadState.hidden = true;
+		resultState.hidden = false;
+		retrigger(resultState, "settle");
+		processing.hidden = false;
+		printWrap.classList.remove("developed");
+		lineEls.forEach((el) => {
+			el.textContent = "";
+			el.classList.remove("typing");
+		});
+		status.textContent = "Photo received. Examining specimen.";
+
+		try {
+			await photo.decode();
+		} catch {}
+		if (runId !== id) return;
+		makePrint();
+
+		await sleep(reduced ? 200 : 1500);
+		if (runId !== id) return;
+		processing.hidden = true;
+		printWrap.classList.add("developed");
+
+		// Placeholder field notes until Cloudflare AI writes the real ones
+		const lines = [
+			"SPECIMEN",
+			`No. ${String(nextFileNumber()).padStart(2, "0")}`,
+			"light / shape / time",
+			String(new Date().getFullYear()),
+		];
+		if (reduced) {
+			lineEls.forEach((el, i) => (el.textContent = lines[i]));
+		} else {
+			await sleep(400);
+			for (let i = 0; i < lines.length; i++) {
+				if (runId !== id) return;
+				await typeLine(lineEls[i], lines[i], id);
+			}
+		}
+		status.textContent = "Field note ready.";
+	}
+
+	function setPhoto(file: File) {
+		if (!file.type.startsWith("image/")) {
+			status.textContent = "That file isn't an image. Drop a photo instead.";
+			return;
+		}
+		if (objectUrl) URL.revokeObjectURL(objectUrl);
+		objectUrl = URL.createObjectURL(file);
+		process(objectUrl);
+	}
+
+	function reset() {
+		runId++;
+		resultState.hidden = true;
+		uploadState.hidden = false;
+		retrigger(uploadState, "settle");
+		if (objectUrl) URL.revokeObjectURL(objectUrl);
+		objectUrl = null;
+		photo.removeAttribute("src");
+		photoBlur.removeAttribute("src");
+		input.value = "";
+		status.textContent = "The desk is empty.";
+	}
+
+	input.addEventListener("change", () => {
+		const file = input.files?.[0];
+		if (file) setPhoto(file);
+	});
+
+	for (const type of ["dragenter", "dragover"]) {
+		dropzone.addEventListener(type, (event) => {
+			event.preventDefault();
+			dropzone.classList.add("drag");
+		});
+	}
+	for (const type of ["dragleave", "drop"]) {
+		dropzone.addEventListener(type, () => dropzone.classList.remove("drag"));
+	}
+	dropzone.addEventListener("drop", (event) => {
+		event.preventDefault();
+		const file = event.dataTransfer?.files?.[0];
+		if (file) setPhoto(file);
+	});
+
+	resetBtn.addEventListener("click", reset);
+
+	// ?demo runs the whole flow with a sample specimen
+	if (new URLSearchParams(location.search).has("demo")) {
+		const sample = `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='600'><rect width='800' height='600' fill='#9aa77f'/><circle cx='620' cy='140' r='64' fill='#efe5a9'/><path d='M0 430 L230 240 L430 430 Z' fill='#35493f'/><path d='M260 430 L520 190 L800 430 Z' fill='#2c3e35'/><rect y='430' width='800' height='170' fill='#5c6b4f'/></svg>`;
+		process(`data:image/svg+xml,${encodeURIComponent(sample)}`);
+	}
+</script>

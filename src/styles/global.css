@@ -1,1 +1,93 @@
 @import "tailwindcss";
+
+@theme {
+  /* Field-office palette, pulled from vintage naturalist card stock */
+  --color-paper: #e9e2cb; /* desk cream */
+  --color-card: #f7f2e0; /* lighter card stock */
+  --color-manila: #e7dfbc; /* green-tinted index card */
+  --color-butter: #efe5a9; /* butter yellow */
+  --color-blush: #f1d5bf; /* certification pink */
+  --color-olive: #82814c; /* uniform olive */
+  --color-spruce: #35493f; /* forest print teal */
+  --color-ink: #262a20; /* warm near-black ink */
+  --color-verm: #c04b24; /* rubber-stamp vermilion */
+  --color-ochre: #be8c33; /* envelope tan */
+
+  --font-display: "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Courier Prime", "Courier New", monospace;
+
+  --shadow-lift: 0 1px 2px rgb(38 42 32 / 0.1), 0 8px 20px rgb(38 42 32 / 0.1);
+}
+
+@layer base {
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--color-butter);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 2px dashed var(--color-verm);
+    outline-offset: 3px;
+  }
+
+  /* Paper grain over everything */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+}
+
+@layer components {
+  /* Cards rest at a slight tilt, like items on a desk */
+  .settle {
+    transform: rotate(var(--tilt, 0deg));
+  }
+}
+
+@keyframes settle-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px) rotate(0deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(var(--tilt, 0deg));
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .settle {
+    opacity: 0;
+    animation: settle-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--delay, 0s);
+  }
+
+  .rise {
+    opacity: 0;
+    animation: rise-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--delay, 0s);
+  }
+}
